@@ -3,12 +3,12 @@
 ### Generate RSA SSH_KEY
 
 ```bash
-ssh-keygen -t rsa -b 4096 -f ~/.ssh/avrora
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/yy
 
 chmod 600 ~/.ssh/avrora
 
 # SSH ( if you had skill issue )
-ssh -v -i ~/.ssh/avrora admin@your_public_ip
+ssh -v -i ~/.ssh/yy user@your_public_ip
 ```
 
 ### AWS
@@ -26,10 +26,29 @@ aws configure sso
 # Default output format [None]: json
 ```
 
-#### variables
+#### VARIABLES
 
 ```bash
 # terraform.tfvars
 ssh_public_key = "YOUR_PUBLIC_KEY"
 
+```
+
+#### BASIC VPS SETUP
+
+```bash
+### NOTE : preferably create a new user for every newly spawn instance you had (do your homework) ###
+
+### CHANGE PASSWORD ###
+# root
+sudo passwd root
+
+# default_user
+sudo passwd user
+
+### UPDATE PACKAGES ###
+sudo apt update -y
+
+### UTILITIES ###
+sudo apt install -y git tmux
 ```

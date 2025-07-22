@@ -1,2 +1,3 @@
 db_username = "your_username"
 db_password = "your_password"
+ssh_public_key = "your_public_key"
