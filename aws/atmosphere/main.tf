@@ -69,11 +69,49 @@ resource "aws_key_pair" "atmosphere_key" {
 	public_key = var.ssh_public_key
 }
 
+resource "aws_s3_bucket" "storage" {
+	bucket = "atmosphere-s3"
+}
+
+resource "aws_iam_role" "ec2_role" {
+	name = "atmosphere-ec2-role"
+	assume_role_policy = jsonencode({
+		Version = "2012-10-17"
+		Statement = [{
+			Action = "sts:AssumeRole"
+			Effect = "Allow"
+			Principal = { Service = "ec2.amazonaws.com" }
+		}]
+	})
+}
+
+resource "aws_iam_role_policy" "s3_policy" {
+	role = aws_iam_role.ec2_role.id
+	policy = jsonencode({
+		Version = "2012-10-17"
+		Statement = [{
+			Effect = "Allow"
+			Action = "s3:*"
+			Resource = [
+				aws_s3_bucket.storage.arn,
+				"${aws_s3_bucket.storage.arn}/*"
+			]
+		}]
+	})
+}
+
+resource "aws_iam_instance_profile" "ec2_profile" {
+	name = "atmosphere-ec2-profile"
+	role = aws_iam_role.ec2_role.name
+}
+
 resource "aws_instance" "ubuntu" {
 	ami           = data.aws_ami.ubuntu_ami.id
 	instance_type = "t3.micro"
 	key_name      = aws_key_pair.atmosphere_key.key_name
 	vpc_security_group_ids = [data.aws_security_group.default.id]
+	iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
+
 
 	root_block_device {
 		volume_type = "gp3"
@@ -130,4 +168,11 @@ output "instance_info" {
    	public_ip = aws_instance.ubuntu.public_ip
    	ssh       = "ssh -i ~/.ssh/yy ubuntu@${aws_instance.ubuntu.public_ip}"
    }
+}
+
+output "s3_info" {
+	description = "S3 bucket info"
+	value = {
+		bucket_name = aws_s3_bucket.storage.bucket
+	}
 }

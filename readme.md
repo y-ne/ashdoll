@@ -50,5 +50,12 @@ sudo passwd user
 sudo apt update -y
 
 ### UTILITIES ###
-sudo apt install -y git tmux
+sudo apt install -y build-essential git tmux unzip curl wget
+
+### AWS CLI ###
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+aws --version
 ```
