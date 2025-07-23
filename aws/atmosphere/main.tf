@@ -64,6 +64,24 @@ resource "aws_security_group_rule" "ssh" {
 	security_group_id = data.aws_security_group.default.id
 }
 
+resource "aws_security_group_rule" "http" {
+	type              = "ingress"
+	from_port         = 80
+	to_port           = 80
+	protocol          = "tcp"
+	cidr_blocks       = ["0.0.0.0/0"]
+	security_group_id = data.aws_security_group.default.id
+}
+
+resource "aws_security_group_rule" "https" {
+	type              = "ingress"
+	from_port         = 443
+	to_port           = 443
+	protocol          = "tcp"
+	cidr_blocks       = ["0.0.0.0/0"]
+	security_group_id = data.aws_security_group.default.id
+}
+
 resource "aws_key_pair" "atmosphere_key" {
 	key_name   = "yy"
 	public_key = var.ssh_public_key
